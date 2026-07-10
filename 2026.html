@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendas Externo × Leads — 2026 (vidas)</title>
+<style>
+  :root{
+    --bg:#0f1623; --line:#27344a; --txt:#e8edf5; --muted:#93a1b8; --faint:#64748b;
+    --pf:#3b6ea5;  --pf2:#5b8bc4; --pme:#16a085; --pme2:#2dd4a7;
+    --ade:#8b5cf6; --ade2:#a78bfa; --lead:#f2820d; --lead2:#ffa94d;
+    --tot:#5b6b85; --tot2:#7e90ad;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 700px at 75% -10%,#1b2a44 0%,#0f1623 55%),#0f1623;
+    color:var(--txt);line-height:1.45;padding:32px 28px 56px;min-height:100vh;}
+  .wrap{max-width:1280px;margin:0 auto}
+  header.top{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:26px;border-bottom:1px solid var(--line);padding-bottom:20px}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.4px}
+  h1 .sub{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-top:6px;letter-spacing:0}
+  .badge{font-size:12px;color:var(--muted);text-align:right}
+  .badge b{color:var(--txt)}
+  .legend{display:flex;gap:20px;align-items:center;margin:0 0 22px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+  .legend .item{display:flex;align-items:center;gap:7px}
+  .dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .filterbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 20px;padding:12px 14px;background:#141d2c;border:1px solid var(--line);border-radius:12px}
+  .filterbar .flabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+  .months{display:flex;gap:6px;flex-wrap:wrap}
+  .mtog{font-size:12.5px;font-weight:600;color:var(--muted);background:#1b2638;border:1px solid var(--line);border-radius:8px;padding:6px 13px;cursor:pointer;transition:all .12s}
+  .mtog:hover{border-color:var(--lead2);color:var(--txt)}
+  .mtog.active{background:var(--lead);border-color:var(--lead);color:#0f1623}
+  .qbtn{font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer}
+  .qbtn:hover{color:var(--txt);border-color:var(--muted)}
+  .fperiod{margin-left:auto;font-size:13px;color:var(--lead2);font-weight:700}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+  .kpi{background:linear-gradient(160deg,#1b2638,#161f2f);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+  .kpi.pf::before{background:var(--pf)} .kpi.pme::before{background:var(--pme)}
+  .kpi.ade::before{background:var(--ade)} .kpi.tot::before{background:var(--lead)}
+  .kpi .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+  .kpi .big{font-size:29px;font-weight:700;margin-top:8px;letter-spacing:-.5px}
+  .kpi .meta{font-size:12.5px;color:var(--faint);margin-top:6px}
+  .kpi .meta .hl{color:var(--lead2);font-weight:600}
+  .kpi .pct{position:absolute;right:16px;top:16px;font-size:13px;font-weight:700;color:var(--lead2);background:#f2820d1a;border:1px solid #f2820d40;padding:3px 9px;border-radius:20px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+  @media(max-width:1100px){.grid4{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:1000px){.grid2{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:640px){.grid4{grid-template-columns:1fr}}
+  .sechead{display:flex;align-items:baseline;gap:12px;margin:8px 0 16px;flex-wrap:wrap}
+  .sechead h2{font-size:19px;font-weight:700;letter-spacing:-.3px}
+  .sechead .note{font-size:12.5px;color:var(--faint)}
+  .rank td{padding:7px 7px}
+  .rank .pos{display:inline-flex;width:22px;height:22px;border-radius:6px;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0f1623}
+  .rank .nm{font-size:11.5px;line-height:1.25;color:var(--txt)}
+  .rank .nm small{color:var(--faint);font-size:10px}
+  .rank .barwrap{display:flex;align-items:center;gap:7px;justify-content:flex-end}
+  .rank .bar2{height:9px;border-radius:5px;background:linear-gradient(90deg,var(--lead),var(--lead2));min-width:3px}
+  .rank .ld{font-weight:700;color:var(--lead2);min-width:38px;text-align:right;display:inline-block}
+  .panel{background:#141d2c;border:1px solid var(--line);border-radius:14px;padding:18px 18px 12px}
+  .panel h2{font-size:15px;font-weight:650;margin-bottom:2px;display:flex;align-items:center;gap:8px}
+  .panel h2 .tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;color:#fff}
+  .tag.pf{background:var(--pf)} .tag.pme{background:var(--pme)} .tag.ade{background:var(--ade)} .tag.tot{background:var(--lead)}
+  .panel .cap{font-size:12px;color:var(--faint);margin:5px 0 12px}
+  .chart{display:flex;align-items:flex-end;gap:8px;height:190px;padding-top:20px}
+  .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+  .bars{display:flex;align-items:flex-end;gap:3px;height:100%;width:100%;justify-content:center}
+  .bar{flex:1 1 0;max-width:22px;min-width:7px;border-radius:5px 5px 0 0;position:relative;transition:filter .15s;cursor:default}
+  .bar:hover{filter:brightness(1.18)}
+  .bar.e.pf{background:linear-gradient(180deg,var(--pf2),var(--pf))}
+  .bar.e.pme{background:linear-gradient(180deg,var(--pme2),var(--pme))}
+  .bar.e.ade{background:linear-gradient(180deg,var(--ade2),var(--ade))}
+  .bar.e.tot{background:linear-gradient(180deg,var(--tot2),var(--tot))}
+  .bar.l{background:linear-gradient(180deg,var(--lead2),var(--lead))}
+  .bar .v{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);white-space:nowrap}
+  .bar.l .v{color:var(--lead2);font-weight:600}
+  .xlab{font-size:11.5px;color:var(--muted);font-weight:600;text-align:center}
+  .xlab .pend{display:block;font-size:9px;color:var(--faint);font-weight:500}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:2px}
+  th,td{padding:8px 8px;text-align:right;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.3px}
+  th:first-child,td:first-child{text-align:left}
+  tbody tr:hover{background:#1b263833}
+  tfoot td{font-weight:700;border-top:2px solid var(--line);border-bottom:none;color:var(--txt)}
+  .conv{color:var(--lead2);font-weight:600}
+  .insight{background:#16203a;border:1px solid #27344a;border-left:3px solid var(--lead);border-radius:10px;padding:16px 18px;margin-bottom:24px;font-size:13.5px;color:#cdd7e6}
+  .insight b{color:var(--txt)}
+  footer{font-size:11.5px;color:var(--faint);margin-top:28px;border-top:1px solid var(--line);padding-top:16px;line-height:1.7}
+  footer code{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Vendas do Time Externo × Origem em Leads — em VIDAS
+      <span class="sub">Quantas vidas da venda externa nasceram de um lead nosso — PF, PME e Adesão · jan–jul 2026 (jul parcial)</span>
+    </h1>
+    <div class="badge">
+      Período: <b>jan a jul / 2026</b> · <b>julho parcial</b> · métrica: <b>vidas</b><br>
+      PF = soma <code>QTDE VIDAS</code> · PME = <code>Qt.Usu</code> · Adesão = beneficiários<br>
+      Cruzamento por telefone · regra lead ≤ venda<br>
+      <span style="color:var(--faint)">jun+jul recomputados · depurado de leads disputados c/ interno (incl. SINTRO)</span>
+    </div>
+  </header>
+  <div class="legend">
+    <span class="item"><span class="dot" style="background:var(--pf)"></span> Total Externo (universo de vidas)</span>
+    <span class="item"><span class="dot" style="background:var(--lead)"></span> VENDA - LEAD NOSSO</span>
+    <span class="item" style="margin-left:auto;color:var(--faint)">Métrica = vidas · jul parcial</span>
+  </div>
+  <div class="filterbar">
+    <span class="flabel">Meses</span>
+    <div class="months" id="monthToggles"></div>
+    <button class="qbtn" data-preset="all">Todos</button>
+    <button class="qbtn" data-preset="none">Limpar</button>
+    <span class="fperiod" id="periodLabel"></span>
+  </div>
+  <div class="kpis">
+    <div class="kpi pf" data-seg="PF">
+      <div class="pct">11,9%</div>
+      <div class="lbl">PF · Pessoa Física</div>
+      <div class="big">146.903</div>
+      <div class="meta">vidas externo · <span class="hl">17.410 venda-lead nosso</span><br><span class="sub" style="color:var(--faint)">jan–jul</span></div>
+    </div>
+    <div class="kpi pme" data-seg="PME">
+      <div class="pct">7,8%</div>
+      <div class="lbl">PME · Peq. e Média Empresa</div>
+      <div class="big">176.394</div>
+      <div class="meta">vidas externo · <span class="hl">13.775 venda-lead nosso</span><br><span class="sub" style="color:var(--faint)">jan–jul</span></div>
+    </div>
+    <div class="kpi ade" data-seg="ADE">
+      <div class="pct">4,3%</div>
+      <div class="lbl">Adesão</div>
+      <div class="big">67.891</div>
+      <div class="meta">vidas externo · <span class="hl">2.897 venda-lead nosso</span><br><span class="sub" style="color:var(--faint)">jan–jul</span></div>
+    </div>
+    <div class="kpi tot" data-seg="TOT">
+      <div class="pct">8,7%</div>
+      <div class="lbl">Consolidado</div>
+      <div class="big">391.188</div>
+      <div class="meta">vidas externo · <span class="hl">34.082 venda-lead nosso</span><br><span class="sub" style="color:var(--faint)">jan–jul</span></div>
+    </div>
+  </div>
+  <div class="insight">No acumulado <b>jan–jul 2026</b> (julho parcial), <b>34.082</b> das <b>391.188</b> vidas vendidas pelo time externo (<b>8,7%</b>) têm origem rastreável em um lead nosso. Aproveitamento por segmento: <b>PF 11,9%</b>, <b>PME 7,8%</b>, <b>Adesão 4,3%</b>. <b>Junho e julho</b> foram recomputados das extrações de 09–10/07 (PME externo de junho 21.755→28.322; PF de junho 25.388). <b>Julho é parcial</b> — PME/Adesão incluem cadastros com data real de vigência no mês (alguns futuros); PF de julho vai só até 10/07.</div>
+  <div class="grid4">
+    <div class="panel"><h2><span class="tag pf">PF</span> Pessoa Física</h2><div class="cap">vidas: total externo (azul) vs. venda-lead nosso (laranja)</div><div class="chart" data-seg="PF"></div></div>
+    <div class="panel"><h2><span class="tag pme">PME</span> Peq. e Média Empresa</h2><div class="cap">vidas: total externo (verde) vs. venda-lead nosso (laranja)</div><div class="chart" data-seg="PME"></div></div>
+    <div class="panel"><h2><span class="tag ade">ADE</span> Adesão</h2><div class="cap">vidas: total externo (roxo) vs. venda-lead nosso (laranja)</div><div class="chart" data-seg="ADE"></div></div>
+    <div class="panel"><h2><span class="tag tot">TOTAL</span> Consolidado</h2><div class="cap">vidas: total externo (cinza) vs. venda-lead nosso (laranja)</div><div class="chart" data-seg="TOT"></div></div>
+  </div>
+  <div class="grid4">
+    <div class="panel"><h2><span class="tag pf">PF</span> vidas · mensal</h2><table data-seg="PF"><thead><tr><th>Mês</th><th>Total Ext.</th><th>Venda-Lead Nosso</th><th>%</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div>
+    <div class="panel"><h2><span class="tag pme">PME</span> vidas · mensal</h2><table data-seg="PME"><thead><tr><th>Mês</th><th>Total Ext.</th><th>Venda-Lead Nosso</th><th>%</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div>
+    <div class="panel"><h2><span class="tag ade">ADE</span> vidas · mensal</h2><table data-seg="ADE"><thead><tr><th>Mês</th><th>Total Ext.</th><th>Venda-Lead Nosso</th><th>%</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div>
+    <div class="panel"><h2><span class="tag tot">TOTAL</span> Consolidado · mensal</h2><table data-seg="TOT"><thead><tr><th>Mês</th><th>Total Ext.</th><th>Venda-Lead Nosso</th><th>%</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div>
+  </div>
+  <div class="sechead">
+    <h2>Top 20 Concessionárias — vidas de Venda-Lead Nosso</h2>
+    <span class="note">soma de vidas das vendas que vieram de lead nosso (PF = QTDE VIDAS · PME = Qt.Usu) · barra laranja = vidas-lead · % = lead ÷ total externo da concessionária · variantes da mesma marca somadas · <b>ranking congelado em jan–jun</b> (acumulado; <b>não muda com o filtro de meses</b>)</span>
+  </div>
+  <div class="grid2">
+    <div class="panel"><h2 style="margin-bottom:12px"><span class="tag pf">PF</span> Pessoa Física — top 20</h2>
+      <table class="rank" data-rk="PF"><thead><tr><th>#</th><th>Concessionária</th><th>Total Ext.</th><th>%</th><th style="text-align:right">Vidas-Lead</th></tr></thead><tbody></tbody></table></div>
+    <div class="panel"><h2 style="margin-bottom:12px"><span class="tag pme">PME</span> Peq. e Média Empresa — top 20</h2>
+      <table class="rank" data-rk="PME"><thead><tr><th>#</th><th>Concessionária</th><th>Total Ext.</th><th>%</th><th style="text-align:right">Vidas-Lead</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <footer>
+    <b style="color:var(--muted)">Metodologia.</b>
+    Métrica = <b>vidas</b>: PF soma <code>QTDE VIDAS</code> · PME soma <code>Qt.Usu</code> · Adesão = contagem de beneficiários.
+    Universo = vendas marcadas <code>EXTERNO</code> (não-INTERBRASIL na Adesão; fora das 12 concessionárias do grupo na PME).
+    <b>"Venda - Lead Nosso"</b> = vidas de vendas cujo telefone (11 díg.) casa com um lead do ano (<code>leads_ano</code>/Supabase)
+    e o <b>1º contato do lead é ≤ data da venda</b> — subconjunto do Total Externo. Data da venda — PF/Adesão:
+    <code>DT_CADASTRAMENTO</code>; PME: <code>DT_CADASTRAMENTO</code> real da empresa (datalake RAWZN).
+    Limpezas (números-lixo, linha comercial ≥5 IDs, celular estrito) e <b>remoção de leads disputados</b> com o interno
+    (inclui PF, PME, Adesão e SINTRO/INTERBRASIL). <b>Jun e jul</b> recomputados das extrações de 09–10/07;
+    <b>jul parcial</b> — PME/Adesão incluem cadastros com data real de vigência no mês (alguns futuros), PF só até 10/07.
+    RANK congelado em jan–jun (recomputar em versão futura). Fonte: <code>cruza_externo_leads_2026.py</code> · atualizado 10/07/2026.
+  </footer>
+</div>
+<script>
+const M = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul"];
+const data = {"PF": {"ext": [19614, 18826, 26900, 24278, 25772, 25388, 6125], "lead": [1362, 1799, 3029, 3052, 3602, 3696, 870]}, "PME": {"ext": [20854, 22108, 29735, 26225, 29420, 28322, 19730], "lead": [667, 1330, 2432, 2118, 2677, 2680, 1871]}, "ADE": {"ext": [5581, 5620, 8243, 6830, 16888, 19130, 5599], "lead": [76, 218, 390, 365, 727, 758, 363]}, "TOT": {"ext": [46049, 46554, 64878, 57333, 72080, 72840, 31454], "lead": [2105, 3347, 5851, 5535, 7006, 7134, 3104]}};
+const PFP = [];
+const RANK = {"PF": [["SL91 CONCEITO EM VENDAS (VARIAS PRACAS)", 1849, 12141, 15.2], ["FELIPE FURTADO CARNEIRO (VARIAS FILIAIS)", 1277, 12096, 10.6], ["LINDA SRC SERVICOS DE PLANOS DE SAUDE", 712, 3088, 23.1], ["HAPPLAN CORRETORA DE PLANO DE SAUDE", 530, 6485, 8.2], ["1024-USINA DO SEGURO ADMINISTRADORA E CORRETORA", 362, 3375, 10.7], ["1022-PLENA SAUDE ADM. E PREST. DE SERV. LTDA - ME", 333, 3120, 10.7], ["156-AMELS SERV DE PLANOS DE SAUDE LTDA ME", 314, 2983, 10.5], ["1033-GPS CONSULT EM PLANOS DE SAUDE EIRELI -ME", 312, 3328, 9.4], ["651-BARBOSA COMERCIO DE PLANOS DE SAUDE LTDA", 242, 2324, 10.4], ["185-MHC CORRETORA DE PLANOS DE SAUDE LTDA - ME", 234, 3587, 6.5], ["JOCROSS CORRETORA DE SEGUROS (VARIAS PRACAS)", 227, 1835, 12.4], ["9090-MARTINS & MARTINS SERVICOS FORTALEZA", 194, 2489, 7.8], ["3191-ASF SAUDE E BENEFICOS LTDA", 192, 1307, 14.7], ["06AU-QUALY V S A INTERMEDIACAO EIRELI", 184, 1076, 17.1], ["HAPMED ASSISTENCIA DE SAUDE", 173, 1745, 9.9], ["703-TOPVIDA CORRETORA DE SEGUROS LTDA", 168, 1468, 11.4], ["4185-S DE N REIS MAGALHAES SERVICOS", 164, 1846, 8.9], ["640-LIDER REP.PLANOS DE SAUDE E PREV.SUBCOD ELITE", 157, 2166, 7.2], ["4341-JOAO VITOR AGUITONI CLEMENTE LTDA", 151, 849, 17.8], ["02LW-D P WHITE REPRES E SERV LTDA", 144, 1325, 10.9]], "PME": [["LINDA SRC SERVICOS DE PLANOS DE SAUDE", 1012, 4673, 21.7], ["SL91 CONCEITO EM VENDAS (VARIAS PRACAS)", 582, 4246, 13.7], ["QUALI PLANOS DE SAUDE E SERVICOS EMPRESARIAIS", 498, 5938, 8.4], ["D P WHITE REPRES E SERV LTDA", 343, 4314, 8.0], ["QUALY V S A INTERMEDIACAO EIRELI", 323, 2886, 11.2], ["FELIPE FURTADO CARNEIRO (VARIAS FILIAIS)", 297, 5170, 5.7], ["HAPPLAN CORRETORA DE PLANO DE SAUDE", 229, 3456, 6.6], ["VALORIZE CORRETORA ASSESSORIA CONSULTORIA E A", 223, 2463, 9.1], ["CORRETORA VIVER PLANOS SAUDE QUALID VIDA LTDA", 218, 470, 46.4], ["FENIX SAUDE LTDA", 200, 1167, 17.1], ["DIGITAL BRASIL PLANO DE SAUDE LTDA", 182, 2183, 8.3], ["JOAO VITOR AGUITONI CLEMENTE LTDA", 170, 1132, 15.0], ["SER MED SOLUCOES EM SAUDE LTDA", 169, 948, 17.8], ["SUPERSEG CORRETORA DE SEGUROS SOCIEDADE UNIPE", 159, 2212, 7.2], ["ESTILO A E CORRETORA SEGUROS LTDA", 156, 2919, 5.3], ["MK PLANOS DE SAUDE LTDA", 144, 1365, 10.5], ["MA CORRETORA DE PLANOS DE SAUDE EIRELI", 141, 1608, 8.8], ["VIDA SAUDE CORRETORA DE PLANOS LTDA", 141, 1120, 12.6], ["YSC GESTAO EM VENDAS LTDA", 139, 514, 27.0], ["STELLA B A C E CORRETAGEM SEGUROS LTDA", 133, 133, 100.0]]};
+const fmt = n => (n==null) ? '—' : n.toLocaleString('pt-BR');
+const k = n => (n==null) ? '—' : (n/1000).toFixed(1).replace('.',',')+'k';
+let sel = M.map(()=>true);   // meses selecionados (default: todos)
+
+function selIdx(){ const r=[]; M.forEach((m,i)=>{ if(sel[i]) r.push(i); }); return r; }
+function rangeLabel(){
+  const idx=selIdx();
+  if(!idx.length) return 'nenhum mês';
+  const contig = idx.every((v,j)=> j===0 || v===idx[j-1]+1);
+  if(contig) return idx.length===1 ? M[idx[0]] : M[idx[0]]+'–'+M[idx[idx.length-1]];
+  return idx.map(i=>M[i]).join(', ');
+}
+function sumSeg(seg){ let e=0,l=0; selIdx().forEach(i=>{ if(data[seg].ext[i]!=null){ e+=data[seg].ext[i]; l+=(data[seg].lead[i]||0);} }); return {e,l}; }
+
+function renderKPIs(){
+  document.querySelectorAll('.kpi[data-seg]').forEach(kp=>{
+    const {e,l}=sumSeg(kp.dataset.seg);
+    kp.querySelector('.big').textContent = fmt(e);
+    kp.querySelector('.pct').textContent = e ? (100*l/e).toFixed(1).replace('.',',')+'%' : '—';
+    const hl=kp.querySelector('.hl'); if(hl) hl.textContent = fmt(l)+' venda-lead nosso';
+    const sub=kp.querySelector('.sub'); if(sub) sub.textContent = rangeLabel();
+  });
+}
+function renderCharts(){
+  const idx=selIdx();
+  document.querySelectorAll('.chart').forEach(el=>{
+    const d=data[el.dataset.seg], seg=el.dataset.seg.toLowerCase();
+    if(!idx.length){ el.innerHTML='<div style="margin:auto;color:var(--faint);font-size:12px">selecione ao menos um mês</div>'; return; }
+    const max=Math.max(...idx.map(i=>d.ext[i]).filter(x=>x!=null), 1);
+    el.innerHTML = idx.map(i=>{
+      if(d.ext[i]==null) return `<div class="col"><div class="bars" style="opacity:.3"><div class="bar e ${seg}" style="height:4px"></div></div><div class="xlab">${M[i]}<span class="pend">pendente</span></div></div>`;
+      const he=Math.max(4,d.ext[i]/max*150), lead=d.lead[i]||0, hl=Math.max(4,lead/max*150);
+      const pct=d.ext[i]?(lead/d.ext[i]*100).toFixed(1).replace('.',','):'0,0';
+      return `<div class="col"><div class="bars">
+          <div class="bar e ${seg}" style="height:${he}px" title="Total externo ${fmt(d.ext[i])} vidas"><span class="v">${k(d.ext[i])}</span></div>
+          <div class="bar l" style="height:${hl}px" title="Venda-lead nosso ${fmt(lead)} vidas (${pct}%)"><span class="v">${fmt(lead)}</span></div>
+        </div><div class="xlab">${M[i]}</div></div>`;
+    }).join('');
+  });
+}
+function renderTables(){
+  const idx=selIdx();
+  document.querySelectorAll('table[data-seg]').forEach(tbl=>{
+    const d=data[tbl.dataset.seg]; let te=0,tl=0;
+    tbl.querySelector('tbody').innerHTML = idx.map(i=>{
+      if(d.ext[i]==null) return `<tr style="opacity:.55"><td>${M[i]}</td><td>—</td><td>pendente</td><td>—</td></tr>`;
+      const lead=d.lead[i]||0; te+=d.ext[i]; tl+=lead;
+      const p=d.ext[i]?(lead/d.ext[i]*100).toFixed(1).replace('.',','):'0,0';
+      return `<tr><td>${M[i]}</td><td>${fmt(d.ext[i])}</td><td>${fmt(lead)}</td><td class="conv">${p}%</td></tr>`;
+    }).join('') || `<tr><td colspan="4" style="color:var(--faint)">selecione ao menos um mês</td></tr>`;
+    const tp=te?(tl/te*100).toFixed(1).replace('.',','):'0,0';
+    tbl.querySelector('tfoot').innerHTML = `<tr><td>Total</td><td>${fmt(te)}</td><td>${fmt(tl)}</td><td class="conv">${tp}%</td></tr>`;
+  });
+}
+function renderAll(){ renderKPIs(); renderCharts(); renderTables(); const pl=document.getElementById('periodLabel'); if(pl) pl.textContent='Período: '+rangeLabel(); }
+
+// filtro de meses (botões clicáveis + Todos/Limpar)
+(function(){
+  const box=document.getElementById('monthToggles');
+  box.innerHTML = M.map((m,i)=>`<button class="mtog active" data-i="${i}">${m}</button>`).join('');
+  box.querySelectorAll('.mtog').forEach(b=>b.addEventListener('click',()=>{ const i=+b.dataset.i; sel[i]=!sel[i]; b.classList.toggle('active',sel[i]); renderAll(); }));
+  document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.preset==='all') sel=M.map(()=>true);
+    if(b.dataset.preset==='none') sel=M.map(()=>false);
+    box.querySelectorAll('.mtog').forEach(x=>x.classList.toggle('active', sel[+x.dataset.i]));
+    renderAll();
+  }));
+})();
+
+// Top-20 concessionárias (estático — acumulado jan–jun, não responde ao filtro)
+const PALPOS = ["#ffd166","#e8edf5","#d8a25a"];
+function splitName(s){ const m=s.match(/^([0-9A-Za-z]{2,4})-(.+)$/); return m?[m[1],m[2]]:["",s]; }
+function titlecase(s){ return s.split(/(\s+)/).map(w=>/[0-9]/.test(w)?w:w.toLowerCase().replace(/\b([a-z])/g,(_,c)=>c.toUpperCase())).join(""); }
+document.querySelectorAll('table.rank').forEach(tbl=>{
+  const rows = RANK[tbl.dataset.rk]||[];
+  const max = Math.max(...rows.map(r=>r[1]), 1);
+  tbl.querySelector('tbody').innerHTML = rows.map((r,i)=>{
+    const [raw,lead,tot,pct]=r; const [code,name]=splitName(raw);
+    const w = Math.max(3, lead/max*88);
+    const pos = i<3 ? `background:${PALPOS[i]}` : `background:#2a3650;color:#cdd7e6`;
+    return `<tr><td><span class="pos" style="${pos}">${i+1}</span></td>
+      <td><div class="nm">${titlecase(name)}${code?` <small>· ${code}</small>`:''}</div></td>
+      <td>${fmt(tot)}</td><td class="conv">${pct.toFixed(1).replace('.',',')}%</td>
+      <td><div class="barwrap"><span class="bar2" style="width:${w}px"></span><span class="ld">${fmt(lead)}</span></div></td></tr>`;
+  }).join('');
+});
+
+renderAll();
+</script>
+</body>
+</html>
