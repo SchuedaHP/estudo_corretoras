@@ -24,6 +24,15 @@
   .legend{display:flex;gap:20px;align-items:center;margin:0 0 22px;font-size:13px;color:var(--muted);flex-wrap:wrap}
   .legend .item{display:flex;align-items:center;gap:7px}
   .dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .filterbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 20px;padding:12px 14px;background:#141d2c;border:1px solid var(--line);border-radius:12px}
+  .filterbar .flabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:700}
+  .months{display:flex;gap:6px;flex-wrap:wrap}
+  .mtog{font-size:12.5px;font-weight:600;color:var(--muted);background:#1b2638;border:1px solid var(--line);border-radius:8px;padding:6px 13px;cursor:pointer;transition:all .12s}
+  .mtog:hover{border-color:var(--lead2);color:var(--txt)}
+  .mtog.active{background:var(--lead);border-color:var(--lead);color:#0f1623}
+  .qbtn{font-size:12px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer}
+  .qbtn:hover{color:var(--txt);border-color:var(--muted)}
+  .fperiod{margin-left:auto;font-size:13px;color:var(--lead2);font-weight:700}
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
   .kpi{background:linear-gradient(160deg,#1b2638,#161f2f);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;position:relative;overflow:hidden}
   .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
@@ -98,30 +107,37 @@
     <span class="item"><span class="dot" style="background:var(--lead)"></span> VENDA - LEAD NOSSO</span>
     <span class="item" style="margin-left:auto;color:var(--faint)">Métrica = vidas</span>
   </div>
+  <div class="filterbar">
+    <span class="flabel">Meses</span>
+    <div class="months" id="monthToggles"></div>
+    <button class="qbtn" data-preset="all">Todos</button>
+    <button class="qbtn" data-preset="none">Limpar</button>
+    <span class="fperiod" id="periodLabel"></span>
+  </div>
   <div class="kpis">
-    <div class="kpi pf">
+    <div class="kpi pf" data-seg="PF">
       <div class="pct">11,4%</div>
       <div class="lbl">PF · Pessoa Física</div>
       <div class="big">148.389</div>
-      <div class="meta">vidas externo · <span class="hl">16.854 venda-lead nosso</span></div>
+      <div class="meta">vidas externo · <span class="hl">16.854 venda-lead nosso</span><br><span class="sub" style="color:var(--faint)">jan–jun</span></div>
     </div>
-    <div class="kpi pme">
+    <div class="kpi pme" data-seg="PME">
       <div class="pct">5,2%</div>
       <div class="lbl">PME · Peq. e Média Empresa</div>
       <div class="big">112.323</div>
-      <div class="meta">vidas externo · <span class="hl">5.797 venda-lead nosso</span></div>
+      <div class="meta">vidas externo · <span class="hl">5.797 venda-lead nosso</span><br><span class="sub" style="color:var(--faint)">jan–jun</span></div>
     </div>
-    <div class="kpi ade">
+    <div class="kpi ade" data-seg="ADE">
       <div class="pct">5,2%</div>
       <div class="lbl">Adesão</div>
       <div class="big">28.838</div>
-      <div class="meta">vidas externo · <span class="hl">1.496 venda-lead nosso</span></div>
+      <div class="meta">vidas externo · <span class="hl">1.496 venda-lead nosso</span><br><span class="sub" style="color:var(--faint)">jan–jun</span></div>
     </div>
-    <div class="kpi tot">
+    <div class="kpi tot" data-seg="TOT">
       <div class="pct">8,3%</div>
       <div class="lbl">Consolidado</div>
       <div class="big">289.550</div>
-      <div class="meta">vidas externo · <span class="hl">24.147 venda-lead nosso</span></div>
+      <div class="meta">vidas externo · <span class="hl">24.147 venda-lead nosso</span><br><span class="sub" style="color:var(--faint)">jan–jun</span></div>
     </div>
   </div>
   <div class="insight">No período <b>jan–25/jun 2025</b>, <b>24.147</b> das <b>289.550</b> vidas vendidas pelo time externo (<b>8,3%</b>) têm origem rastreável em um lead nosso. Aproveitamento por segmento: <b>PF 11,4%</b>, <b>PME 5,2%</b>, <b>Adesão 5,2%</b>. Métrica = vidas (PF <code>QTDE VIDAS</code>, PME <code>Qt.Usu</code>, Adesão = beneficiários).</div>
@@ -139,7 +155,7 @@
   </div>
   <div class="sechead">
     <h2>Top 20 Concessionárias — vidas de Venda-Lead Nosso</h2>
-    <span class="note">soma de vidas das vendas que vieram de lead nosso (PF = QTDE VIDAS · PME = Qt.Usu) · barra laranja = vidas-lead · % = lead ÷ total externo da concessionária · <b>variantes da mesma marca somadas</b></span>
+    <span class="note">soma de vidas das vendas que vieram de lead nosso (PF = QTDE VIDAS · PME = Qt.Usu) · barra laranja = vidas-lead · % = lead ÷ total externo da concessionária · <b>variantes da mesma marca somadas</b> · acumulado jan–jun (<b>não muda com o filtro de meses</b>)</span>
   </div>
   <div class="grid2">
     <div class="panel"><h2 style="margin-bottom:12px"><span class="tag pf">PF</span> Pessoa Física — top 20</h2>
@@ -160,21 +176,74 @@
 <script>
 const M = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"];
 const data = {"PF": {"ext": [24078, 24453, 24358, 26214, 28374, 20912], "lead": [1544, 2446, 2883, 3204, 3800, 2977]}, "PME": {"ext": [17428, 19034, 20347, 18687, 20258, 16569], "lead": [530, 677, 1056, 942, 1368, 1224]}, "ADE": {"ext": [3262, 3829, 6928, 4225, 4974, 5620], "lead": [29, 190, 329, 288, 313, 347]}, "TOT": {"ext": [44768, 47316, 51633, 49126, 53606, 43101], "lead": [2103, 3313, 4268, 4434, 5481, 4548]}};
-const fmt = n => n.toLocaleString('pt-BR');
-const k = n => (n/1000).toFixed(1).replace('.',',')+'k';
-document.querySelectorAll('.chart').forEach(el=>{
-  const d = data[el.dataset.seg];
-  const max = Math.max(...d.ext, 1);
-  el.innerHTML = M.map((m,i)=>{
-    const he = Math.max(4, d.ext[i]/max*150);
-    const hl = Math.max(4, d.lead[i]/max*150);
-    const pct = d.ext[i]?(d.lead[i]/d.ext[i]*100).toFixed(1).replace('.',','):'0,0';
-    return `<div class="col"><div class="bars">
-        <div class="bar e ${el.dataset.seg.toLowerCase()}" style="height:${he}px" title="Total externo ${fmt(d.ext[i])} vidas"><span class="v">${k(d.ext[i])}</span></div>
-        <div class="bar l" style="height:${hl}px" title="Venda-lead nosso ${fmt(d.lead[i])} vidas (${pct}%)"><span class="v">${fmt(d.lead[i])}</span></div>
-      </div><div class="xlab">${m}</div></div>`;
-  }).join('');
-});
+const fmt = n => (n==null) ? '—' : n.toLocaleString('pt-BR');
+const k = n => (n==null) ? '—' : (n/1000).toFixed(1).replace('.',',')+'k';
+let sel = M.map(()=>true);   // meses selecionados (default: todos)
+
+function selIdx(){ const r=[]; M.forEach((m,i)=>{ if(sel[i]) r.push(i); }); return r; }
+function rangeLabel(){
+  const idx=selIdx();
+  if(!idx.length) return 'nenhum mês';
+  const contig = idx.every((v,j)=> j===0 || v===idx[j-1]+1);
+  if(contig) return idx.length===1 ? M[idx[0]] : M[idx[0]]+'–'+M[idx[idx.length-1]];
+  return idx.map(i=>M[i]).join(', ');
+}
+function sumSeg(seg){ let e=0,l=0; selIdx().forEach(i=>{ if(data[seg].ext[i]!=null){ e+=data[seg].ext[i]; l+=(data[seg].lead[i]||0);} }); return {e,l}; }
+
+function renderKPIs(){
+  document.querySelectorAll('.kpi[data-seg]').forEach(kp=>{
+    const {e,l}=sumSeg(kp.dataset.seg);
+    kp.querySelector('.big').textContent = fmt(e);
+    kp.querySelector('.pct').textContent = e ? (100*l/e).toFixed(1).replace('.',',')+'%' : '—';
+    const hl=kp.querySelector('.hl'); if(hl) hl.textContent = fmt(l)+' venda-lead nosso';
+    const sub=kp.querySelector('.sub'); if(sub) sub.textContent = rangeLabel();
+  });
+}
+function renderCharts(){
+  const idx=selIdx();
+  document.querySelectorAll('.chart').forEach(el=>{
+    const d=data[el.dataset.seg], seg=el.dataset.seg.toLowerCase();
+    if(!idx.length){ el.innerHTML='<div style="margin:auto;color:var(--faint);font-size:12px">selecione ao menos um mês</div>'; return; }
+    const max=Math.max(...idx.map(i=>d.ext[i]).filter(x=>x!=null), 1);
+    el.innerHTML = idx.map(i=>{
+      const he=Math.max(4,d.ext[i]/max*150), lead=d.lead[i]||0, hl=Math.max(4,lead/max*150);
+      const pct=d.ext[i]?(lead/d.ext[i]*100).toFixed(1).replace('.',','):'0,0';
+      return `<div class="col"><div class="bars">
+          <div class="bar e ${seg}" style="height:${he}px" title="Total externo ${fmt(d.ext[i])} vidas"><span class="v">${k(d.ext[i])}</span></div>
+          <div class="bar l" style="height:${hl}px" title="Venda-lead nosso ${fmt(lead)} vidas (${pct}%)"><span class="v">${fmt(lead)}</span></div>
+        </div><div class="xlab">${M[i]}</div></div>`;
+    }).join('');
+  });
+}
+function renderTables(){
+  const idx=selIdx();
+  document.querySelectorAll('table[data-seg]').forEach(tbl=>{
+    const d=data[tbl.dataset.seg]; let te=0,tl=0;
+    tbl.querySelector('tbody').innerHTML = idx.map(i=>{
+      const lead=d.lead[i]||0; te+=d.ext[i]; tl+=lead;
+      const p=d.ext[i]?(lead/d.ext[i]*100).toFixed(1).replace('.',','):'0,0';
+      return `<tr><td>${M[i]}</td><td>${fmt(d.ext[i])}</td><td>${fmt(lead)}</td><td class="conv">${p}%</td></tr>`;
+    }).join('') || `<tr><td colspan="4" style="color:var(--faint)">selecione ao menos um mês</td></tr>`;
+    const tp=te?(tl/te*100).toFixed(1).replace('.',','):'0,0';
+    tbl.querySelector('tfoot').innerHTML = `<tr><td>Total</td><td>${fmt(te)}</td><td>${fmt(tl)}</td><td class="conv">${tp}%</td></tr>`;
+  });
+}
+function renderAll(){ renderKPIs(); renderCharts(); renderTables(); const pl=document.getElementById('periodLabel'); if(pl) pl.textContent='Período: '+rangeLabel(); }
+
+// filtro de meses (botões clicáveis + Todos/Limpar)
+(function(){
+  const box=document.getElementById('monthToggles');
+  box.innerHTML = M.map((m,i)=>`<button class="mtog active" data-i="${i}">${m}</button>`).join('');
+  box.querySelectorAll('.mtog').forEach(b=>b.addEventListener('click',()=>{ const i=+b.dataset.i; sel[i]=!sel[i]; b.classList.toggle('active',sel[i]); renderAll(); }));
+  document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.preset==='all') sel=M.map(()=>true);
+    if(b.dataset.preset==='none') sel=M.map(()=>false);
+    box.querySelectorAll('.mtog').forEach(x=>x.classList.toggle('active', sel[+x.dataset.i]));
+    renderAll();
+  }));
+})();
+
+// Top-20 concessionárias (estático — acumulado jan–jun, não responde ao filtro)
 const RANK = {"PF": [["SL91 CONCEITO EM VENDAS (VARIAS PRACAS)", 1309, 7704, 17.0], ["FELIPE FURTADO CARNEIRO (VARIAS FILIAIS)", 927, 8347, 11.1], ["HAPPLAN CORRETORA DE PLANO DE SAUDE", 686, 7208, 9.5], ["AMELS SERV DE PLANOS DE SAUDE LTDA ME", 561, 7289, 7.7], ["ELIO MARTINS DE MORAES JUNIOR VENDAS", 481, 3227, 14.9], ["USINA DO SEGURO ADMINISTRADORA E CORRETORA", 399, 3644, 10.9], ["PLENA SAUDE ADM. E PREST. DE SERV. LTDA - ME", 385, 3336, 11.5], ["GPS CONSULT EM PLANOS DE SAUDE EIRELI -ME", 374, 3738, 10.0], ["A&G SOLUCOES INTEGRADAS LTDA", 334, 1967, 17.0], ["ASF SAUDE E BENEFICOS LTDA", 297, 1651, 18.0], ["MHC CORRETORA DE PLANOS DE SAUDE LTDA - ME", 291, 5139, 5.7], ["BARBOSA COMERCIO DE PLANOS DE SAUDE LTDA", 249, 2332, 10.7], ["LIDER REP.PLANOS DE SAUDE E PREV.SUBCOD ELITE", 227, 2573, 8.8], ["S DE N REIS MAGALHAES SERVICOS", 225, 2376, 9.5], ["L TEIXEIRA SERVICOS LTDA ME", 224, 2080, 10.8], ["MARTINS & MARTINS SERVICOS FORTALEZA", 216, 3119, 6.9], ["JOAO VITOR AGUITONI CLEMENTE LTDA", 207, 1024, 20.2], ["VIVENCIA CORRETORA DE SEGUROS LTDA", 203, 1584, 12.8], ["HAPMED ASSISTENCIA DE SAUDE", 181, 3656, 5.0], ["HEALTHINK GESTAO ESTRAT E INTELIG DE NEG LTDA", 180, 1100, 16.4]], "PME": [["SAO FRANCISCO SISTEMAS SAUD SOCIE EMPRE LIMIT", 236, 1372, 17.2], ["SPEAK BROKER CORRETORA LTDA", 215, 542, 39.7], ["D P WHITE REPRES E SERV LTDA", 215, 1634, 13.2], ["HAPPLAN CORRETORA DE PLANO DE SAUDE", 188, 2246, 8.4], ["SL91 CONCEITO EM VENDAS (VARIAS PRACAS)", 187, 2591, 7.2], ["FELIPE FURTADO CARNEIRO (VARIAS FILIAIS)", 180, 3670, 4.9], ["CURA SALUTE CORRETAGEM DE SEGUROS LTDA", 140, 319, 43.9], ["QUALI PLANOS DE SAUDE E SERVICOS EMPRESARIAIS", 139, 2286, 6.1], ["JOAO VITOR AGUITONI CLEMENTE LTDA", 117, 707, 16.5], ["ITAU CORRETORA DE SEGUROS S A", 95, 847, 11.2], ["VALORIZE CORRETORA ASSESSORIA CONSULTORIA E A", 93, 984, 9.5], ["HEALTHINK GESTAO ESTRAT E INTELIG DE NEG LTDA", 87, 3949, 2.2], ["INTEGRA VITA GESTAO DE BENEF E CORRET DE SEG", 86, 515, 16.7], ["SER MED SOLUCOES EM SAUDE LTDA", 75, 491, 15.3], ["ESTILO A E CORRETORA SEGUROS LTDA", 75, 1451, 5.2], ["ELIO MARTINS DE MORAES JUNIOR VENDAS", 75, 933, 8.0], ["HAPMED ASSISTENCIA DE SAUDE", 74, 1368, 5.4], ["HAPVIDA", 74, 4060, 1.8], ["SUPERSEG CORRETORA DE SEGUROS SOCIEDADE UNIPE", 67, 1052, 6.4], ["C CAMARA CORRETORA DE PLANOS DE SAUDE LTDA", 65, 855, 7.6]]};
 const PALPOS = ["#ffd166","#e8edf5","#d8a25a"];
 function titlecase(s){ return s.split(/(\s+)/).map(w=>/[0-9]/.test(w)?w:w.toLowerCase().replace(/\b([a-z])/g,(_,c)=>c.toUpperCase())).join(""); }
@@ -191,17 +260,8 @@ document.querySelectorAll('table.rank').forEach(tbl=>{
       <td><div class="barwrap"><span class="bar2" style="width:${w}px"></span><span class="ld">${fmt(lead)}</span></div></td></tr>`;
   }).join('');
 });
-document.querySelectorAll('table[data-seg]').forEach(tbl=>{
-  const d = data[tbl.dataset.seg];
-  let te=0, tl=0;
-  tbl.querySelector('tbody').innerHTML = M.map((m,i)=>{
-    te+=d.ext[i]; tl+=d.lead[i];
-    const p=d.ext[i]?(d.lead[i]/d.ext[i]*100).toFixed(1).replace('.',','):'0,0';
-    return `<tr><td>${m}</td><td>${fmt(d.ext[i])}</td><td>${fmt(d.lead[i])}</td><td class="conv">${p}%</td></tr>`;
-  }).join('');
-  const tp=te?(tl/te*100).toFixed(1).replace('.',','):'0,0';
-  tbl.querySelector('tfoot').innerHTML = `<tr><td>Total</td><td>${fmt(te)}</td><td>${fmt(tl)}</td><td class="conv">${tp}%</td></tr>`;
-});
+
+renderAll();
 </script>
 </body>
 </html>
