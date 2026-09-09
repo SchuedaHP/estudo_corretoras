@@ -84,6 +84,21 @@
   tbody tr:hover{background:#1b263833}
   tfoot td{font-weight:700;border-top:2px solid var(--line);border-bottom:none;color:var(--txt)}
   .conv{color:var(--lead2);font-weight:600}
+  .segtabs{display:flex;gap:6px;margin-left:auto}
+  .segtabs button{font-size:11.5px;font-weight:600;color:var(--muted);background:#1b2638;border:1px solid var(--line);border-radius:7px;padding:4px 11px;cursor:pointer;transition:all .12s}
+  .segtabs button:hover{color:var(--txt);border-color:var(--muted)}
+  .segtabs button.active{background:var(--lead);border-color:var(--lead);color:#0f1623}
+  table.mtx{font-size:12px;table-layout:fixed;border-collapse:separate;border-spacing:2px}
+  table.mtx th{padding:5px 3px;text-align:center;border:none}
+  table.mtx td{padding:6px 3px;text-align:center;border:none}
+  table.mtx td.mv{text-align:left;color:var(--muted);font-weight:600;padding-left:6px}
+  table.mtx td.cell{border-radius:5px;color:var(--txt)}
+  table.mtx td.diag{box-shadow:inset 0 0 0 1px #ffb86188}
+  table.mtx td.rt{text-align:right;font-weight:700;color:var(--lead2);padding-right:6px}
+  table.mtx td.pc{font-weight:600;font-variant-numeric:tabular-nums}
+  table.mtx th.pch{font-weight:600}
+  table.mtx th,table.mtx td.mv{white-space:nowrap}
+  table.mtx tfoot td{border-top:2px solid var(--line);color:var(--muted);font-weight:600;padding-top:8px}
   .insight{background:#16203a;border:1px solid #27344a;border-left:3px solid var(--lead);border-radius:10px;padding:16px 18px;margin-bottom:24px;font-size:13.5px;color:#cdd7e6}
   .insight b{color:var(--txt)}
   footer{font-size:11.5px;color:var(--faint);margin-top:28px;border-top:1px solid var(--line);padding-top:16px;line-height:1.7}
@@ -155,6 +170,16 @@
     <div class="panel"><h2><span class="tag tot">TOTAL</span> Consolidado · mensal</h2><table data-seg="TOT"><thead><tr><th>Mês</th><th>Total Ext.</th><th>Venda-Lead Nosso</th><th>%</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div>
   </div>
   <div class="sechead">
+    <h2>Origem do lead — de que safra veio cada venda</h2>
+    <span class="note">o mês do 1º contato do lead que originou cada venda · em <b>Ago</b>, <b>5.382</b> das <b>7.050</b> vidas venda-lead (<b>76%</b>) nasceram de um lead de mês <b>anterior</b> — no ano, <b>63%</b>. Cada linha da matriz soma o mesmo total venda-lead dos cards acima; a composição vem do recomputo de 09/09</span>
+  </div>
+  <div class="panel" style="margin-bottom:24px">
+    <h2>Matriz mês da venda × mês do lead <span style="font-weight:400;color:var(--faint);font-size:12px">(vidas)</span>
+      <span class="segtabs" id="segTabs"></span></h2>
+    <div class="cap">linha = mês em que a venda foi cadastrada · coluna = mês do 1º contato do lead · célula contornada = lead do próprio mês · a área acima da diagonal é vazia por construção (lead ≤ venda) · as duas últimas colunas dividem o mês entre lead <b style="color:var(--lead2)">do próprio mês</b> e lead <b style="color:#c07a2a">de safra anterior</b></div>
+    <div style="overflow-x:auto"><table class="mtx" id="mtxTable"></table></div>
+  </div>
+  <div class="sechead">
     <h2>Top 20 Concessionárias — vidas de Venda-Lead Nosso</h2>
     <span class="note">soma de vidas das vendas que vieram de lead nosso (PF = QTDE VIDAS · PME = Qt.Usu) · barra laranja = vidas-lead · % = lead ÷ total externo da concessionária · variantes da mesma marca somadas · <b>ranking do acumulado jan–ago</b> (<b>não muda com o filtro de meses</b>)</span>
   </div>
@@ -174,12 +199,22 @@
     Limpezas (números-lixo, linha comercial ≥5 IDs, celular estrito) e <b>remoção de leads disputados</b> com o interno
     (inclui PF, PME, Adesão e SINTRO/INTERBRASIL). <b>Agosto</b> recomputado das extrações de 02/09 (jan–jul congelado);
     PME/Adesão incluem cadastros com data real de vigência no mês (alguns futuros). Bases COMPLEMENTARES: união dos snapshots dedup por Nº CONTROLE (PF) / Codigo (PME) / CD_USUARIO (Adesão).
-    RANK recomputado até agosto (jan–mai do round de 30/06; jun–ago das bases atuais). Fonte: <code>cruza_externo_leads_2026.py</code> · atualizado 02/09/2026.
+    RANK recomputado até agosto (jan–mai do round de 30/06; jun–ago das bases atuais).
+    <br><b style="color:var(--muted)">Origem do lead (coorte).</b>
+    Safra = mês do <b>1º contato</b> do lead que casou com a venda (mesmo <code>lead_min</code> do cruzamento),
+    então a matriz é triangular por construção. PF vem da base atual (cobre jan–ago); PME e Adesão de jan–mai
+    vêm da base do round de 30/06 (<code>ANALISE_VENDAS.xlsx</code> + datalake daquele round), cujo universo
+    externo por mês reproduz exato o congelado no baseline. Como o pkl de leads é mais novo e o conjunto
+    INTERNO usado na depuração é a união das duas bases, o total recomputado difere do publicado em até
+    2,4% no mês: <b>cada linha é reescalada por maior-resto para somar exato o venda-lead dos cards</b> —
+    a matriz carrega a composição, não redefine os totais.
+    Fonte: <code>cruza_externo_leads_2026.py</code> + <code>coorte_2026.py</code> · atualizado 09/09/2026.
   </footer>
 </div>
 <script>
 const M = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago"];
 const data = {"PF": {"ext": [19614, 18826, 26900, 24278, 25772, 25388, 18442, 17730], "lead": [1362, 1799, 3029, 3052, 3602, 3696, 2761, 2873]}, "PME": {"ext": [20854, 22108, 29735, 26225, 29420, 28322, 26237, 31001], "lead": [667, 1330, 2432, 2118, 2677, 2680, 2724, 3417]}, "ADE": {"ext": [5581, 5620, 8243, 6830, 16888, 19130, 7949, 9443], "lead": [76, 218, 390, 365, 727, 758, 599, 760]}, "TOT": {"ext": [46049, 46554, 64878, 57333, 72080, 72840, 52628, 58174], "lead": [2105, 3347, 5851, 5535, 7006, 7134, 6084, 7050]}};
+const COO = {"PF": [[1362, 0, 0, 0, 0, 0, 0, 0], [838, 961, 0, 0, 0, 0, 0, 0], [627, 763, 1639, 0, 0, 0, 0, 0], [423, 341, 865, 1423, 0, 0, 0, 0], [403, 288, 522, 784, 1605, 0, 0, 0], [384, 253, 396, 426, 889, 1348, 0, 0], [258, 163, 219, 198, 364, 577, 982, 0], [233, 172, 243, 148, 256, 252, 636, 933]], "PME": [[667, 0, 0, 0, 0, 0, 0, 0], [775, 555, 0, 0, 0, 0, 0, 0], [721, 904, 807, 0, 0, 0, 0, 0], [397, 331, 756, 634, 0, 0, 0, 0], [327, 428, 476, 721, 725, 0, 0, 0], [348, 349, 311, 325, 651, 696, 0, 0], [280, 210, 287, 254, 480, 568, 645, 0], [330, 278, 333, 244, 339, 390, 836, 667]], "ADE": [[76, 0, 0, 0, 0, 0, 0, 0], [168, 50, 0, 0, 0, 0, 0, 0], [169, 139, 82, 0, 0, 0, 0, 0], [64, 68, 181, 52, 0, 0, 0, 0], [95, 74, 151, 301, 106, 0, 0, 0], [121, 67, 99, 113, 278, 80, 0, 0], [60, 48, 57, 64, 114, 193, 63, 0], [80, 41, 47, 61, 97, 133, 233, 68]], "TOT": [[2105, 0, 0, 0, 0, 0, 0, 0], [1781, 1566, 0, 0, 0, 0, 0, 0], [1517, 1806, 2528, 0, 0, 0, 0, 0], [884, 740, 1802, 2109, 0, 0, 0, 0], [825, 790, 1149, 1806, 2436, 0, 0, 0], [853, 669, 806, 864, 1818, 2124, 0, 0], [598, 421, 563, 516, 958, 1338, 1690, 0], [643, 491, 623, 453, 692, 775, 1705, 1668]]};
 const PFP = [];
 const RANK = {"PF": [["SL91 CONCEITO EM VENDAS (VARIAS PRACAS)", 2617, 15847, 16.5], ["FELIPE FURTADO CARNEIRO (VARIAS FILIAIS)", 1917, 16323, 11.7], ["LINDA SRC SERVICOS DE PLANOS DE SAUDE", 919, 3750, 24.5], ["HAPPLAN CORRETORA DE PLANO DE SAUDE", 730, 8167, 8.9], ["1022-PLENA SAUDE ADM. E PREST. DE SERV. LTDA - ME", 535, 4330, 12.4], ["1024-USINA DO SEGURO ADMINISTRADORA E CORRETORA", 516, 4553, 11.3], ["1033-GPS CONSULT EM PLANOS DE SAUDE EIRELI -ME", 470, 4494, 10.5], ["156-AMELS SERV DE PLANOS DE SAUDE LTDA ME", 387, 3656, 10.6], ["651-BARBOSA COMERCIO DE PLANOS DE SAUDE LTDA", 381, 3216, 11.8], ["JOCROSS CORRETORA DE SEGUROS (VARIAS PRACAS)", 373, 2508, 14.9], ["185-MHC CORRETORA DE PLANOS DE SAUDE LTDA - ME", 334, 4508, 7.4], ["3191-ASF SAUDE E BENEFICOS LTDA", 298, 1757, 17.0], ["9090-MARTINS & MARTINS SERVICOS FORTALEZA", 257, 3031, 8.5], ["703-TOPVIDA CORRETORA DE SEGUROS LTDA", 244, 1949, 12.5], ["HAPMED ASSISTENCIA DE SAUDE", 242, 2247, 10.8], ["06AU-QUALY V S A INTERMEDIACAO EIRELI", 241, 1401, 17.2], ["315A-MULTIPLAN SAUDE E SEGUROS LTDA", 225, 1676, 13.4], ["0AFB-DIGITAL BRASIL PLANO DE SAUDE LTDA", 212, 1620, 13.1], ["640-LIDER REP.PLANOS DE SAUDE E PREV.SUBCOD ELITE", 208, 2837, 7.3], ["02LW-D P WHITE REPRES E SERV LTDA", 204, 1744, 11.7]], "PME": [["LINDA SRC SERVICOS DE PLANOS DE SAUDE", 1632, 6796, 24.0], ["SL91 CONCEITO EM VENDAS (VARIAS PRACAS)", 888, 6221, 14.3], ["QUALI PLANOS DE SAUDE E SERVICOS EMPRESARIAIS", 738, 8225, 9.0], ["FELIPE FURTADO CARNEIRO (VARIAS FILIAIS)", 526, 7645, 6.9], ["D P WHITE REPRES E SERV LTDA", 492, 5881, 8.4], ["QUALY V S A INTERMEDIACAO EIRELI", 471, 3908, 12.1], ["HAPPLAN CORRETORA DE PLANO DE SAUDE", 386, 4766, 8.1], ["FENIX SAUDE LTDA", 376, 1998, 18.8], ["CORRETORA VIVER PLANOS SAUDE QUALID VIDA LTDA", 334, 686, 48.7], ["VALORIZE CORRETORA ASSESSORIA CONSULTORIA E A", 318, 3461, 9.2], ["DIGITAL BRASIL PLANO DE SAUDE LTDA", 296, 3015, 9.8], ["JOAO VITOR AGUITONI CLEMENTE LTDA", 276, 1920, 14.4], ["SER MED SOLUCOES EM SAUDE LTDA", 264, 1405, 18.8], ["YSC GESTAO EM VENDAS LTDA", 238, 909, 26.2], ["ESTILO A E CORRETORA SEGUROS LTDA", 234, 4009, 5.8], ["SUPERSEG CORRETORA DE SEGUROS SOCIEDADE UNIPE", 231, 3005, 7.7], ["VIDA SAUDE CORRETORA DE PLANOS LTDA", 225, 1717, 13.1], ["MK PLANOS DE SAUDE LTDA", 219, 1832, 12.0], ["TJK CORRETORA DE SEGUROS LTDA", 192, 1231, 15.6], ["MA CORRETORA DE PLANOS DE SAUDE EIRELI", 183, 2318, 7.9]]};
 const fmt = n => (n==null) ? '—' : n.toLocaleString('pt-BR');
@@ -236,7 +271,58 @@ function renderTables(){
     tbl.querySelector('tfoot').innerHTML = `<tr><td>Total</td><td>${fmt(te)}</td><td>${fmt(tl)}</td><td class="conv">${tp}%</td></tr>`;
   });
 }
-function renderAll(){ renderKPIs(); renderCharts(); renderTables(); const pl=document.getElementById('periodLabel'); if(pl) pl.textContent='Período: '+rangeLabel(); }
+// ---- coorte: matriz mes da venda x safra do lead ----
+let mtxSeg = 'TOT';
+const PROPRIO = '#ffb861', ANTER = '#c07a2a';
+
+function renderMatrix(){
+  const idx=selIdx(), C=COO[mtxSeg];
+  const t=document.getElementById('mtxTable');
+  if(!idx.length){ t.innerHTML='<tbody><tr><td style="color:var(--faint);text-align:left">selecione ao menos um mês</td></tr></tbody>'; return; }
+  let h='<colgroup><col style="width:124px"><col span="'+M.length+'"><col style="width:88px">'
+      + '<col style="width:60px"><col style="width:60px"></colgroup>'
+      + '<thead><tr><th style="text-align:left;color:var(--faint);font-weight:500">venda ↓ / lead →</th>'
+      + M.map(m=>`<th style="color:var(--muted);font-weight:600">${m}</th>`).join('')
+      + '<th style="text-align:right;color:var(--muted);font-weight:600">total</th>'
+      + `<th class="pch" style="color:${PROPRIO}">próprio</th><th class="pch" style="color:${ANTER}">anter.</th>`
+      + '</tr></thead><tbody>';
+  const col=M.map(()=>0); let gt=0, gp=0;
+  idx.forEach(i=>{
+    const row=C[i], rt=row.reduce((a,b)=>a+b,0), mx=Math.max(...row,1);
+    gt+=rt; gp+=row[i];
+    h+=`<tr><td class="mv">${M[i]}</td>`;
+    row.forEach((v,jj)=>{
+      col[jj]+=v;
+      if(!v){ h+='<td></td>'; return; }
+      const a=(0.12+0.70*v/mx).toFixed(2);
+      const dg = jj===i ? ' diag' : '';
+      h+=`<td class="cell${dg}" style="background:rgba(242,130,13,${a})" title="${M[i]}: ${fmt(v)} vidas de lead de ${M[jj]} — ${(100*v/(rt||1)).toFixed(1).replace('.',',')}% do mês">${fmt(v)}</td>`;
+    });
+    const pp = rt ? Math.round(100*row[i]/rt) : 0;
+    h+=`<td class="rt">${fmt(rt)}</td>`
+     + `<td class="pc" style="color:${PROPRIO}" title="${fmt(row[i])} vidas de lead do próprio mês">${rt?pp+'%':'—'}</td>`
+     + `<td class="pc" style="color:${ANTER}" title="${fmt(rt-row[i])} vidas de lead de mês anterior">${rt?(100-pp)+'%':'—'}</td></tr>`;
+  });
+  const tp = gt ? Math.round(100*gp/gt) : 0;
+  h+='</tbody><tfoot><tr><td style="text-align:left">total por safra</td>'
+   + col.map(v=>`<td>${v?fmt(v):'—'}</td>`).join('')
+   + `<td class="rt">${fmt(gt)}</td>`
+   + `<td class="pc" style="color:${PROPRIO}">${gt?tp+'%':'—'}</td>`
+   + `<td class="pc" style="color:${ANTER}">${gt?(100-tp)+'%':'—'}</td></tr></tfoot>`;
+  t.innerHTML=h;
+}
+(function(){
+  const tabs=document.getElementById('segTabs');
+  tabs.innerHTML=[['PF','PF'],['PME','PME'],['ADE','Adesão'],['TOT','Consolidado']]
+    .map(([k,l])=>`<button data-ms="${k}"${k===mtxSeg?' class="active"':''}>${l}</button>`).join('');
+  tabs.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    mtxSeg=b.dataset.ms;
+    tabs.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.ms===mtxSeg));
+    renderMatrix();
+  }));
+})();
+
+function renderAll(){ renderKPIs(); renderCharts(); renderTables(); renderMatrix(); const pl=document.getElementById('periodLabel'); if(pl) pl.textContent='Período: '+rangeLabel(); }
 
 // filtro de meses (botões clicáveis + Todos/Limpar)
 (function(){
