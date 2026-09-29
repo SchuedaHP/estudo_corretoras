@@ -139,13 +139,19 @@
   table.mtx th{padding:5px 3px;text-align:center;border:none}
   table.mtx td{padding:6px 3px;text-align:center;border:none}
   table.mtx td.mv{text-align:left;color:var(--muted);font-weight:600;padding-left:6px}
-  table.mtx td.cell{border-radius:5px;color:var(--txt)}
-  table.mtx td.diag{box-shadow:inset 0 0 0 1px #ffb86188}
-  table.mtx td.rt{text-align:right;font-weight:700;color:var(--lead2);padding-right:6px}
-  table.mtx td.pc{font-weight:600;font-variant-numeric:tabular-nums}
-  table.mtx th.pch{font-weight:600}
+  table.mtx td.cell{border-radius:5px;color:var(--txt);line-height:1.25;padding:5px 2px}
+  table.mtx td.cell b{display:block;font-size:13px;font-weight:600}
+  table.mtx td.cell i{display:block;font-style:normal;font-size:11px;color:#b7c1d6}
+  table.mtx td.diag{box-shadow:0 0 0 1.5px #ffb861}
+  table.mtx td.diag i{color:#fff3e2}
+  table.mtx td.na{color:#3b4763}
+  table.mtx td.rt{text-align:right;padding-right:6px;line-height:1.25}
+  table.mtx td.rt b{display:block;font-size:13px;font-weight:700;color:var(--lead2)}
+  table.mtx td.rt i{display:block;font-style:normal;font-size:11px;color:var(--faint)}
   table.mtx th,table.mtx td.mv{white-space:nowrap}
-  table.mtx tfoot td{border-top:2px solid var(--line);color:var(--muted);font-weight:600;padding-top:8px}
+  table.mtx tr.ult td.mv{color:#ffb861}
+  .mtxleit{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
+  .mtxleit .fn{color:var(--faint)}
   .insight{background:#16203a;border:1px solid #27344a;border-left:3px solid var(--lead);border-radius:10px;padding:16px 18px;margin-bottom:24px;font-size:13.5px;color:#cdd7e6}
   .insight b{color:var(--txt)}
   footer{font-size:11.5px;color:var(--faint);margin-top:28px;border-top:1px solid var(--line);padding-top:16px;line-height:1.7}
@@ -221,10 +227,11 @@
     <span class="note">o mês do 1º contato do lead que originou cada venda · em <b>Set</b>, <b>5.498</b> das <b>7.268</b> vidas venda-lead (<b>76%</b>) nasceram de um lead de mês <b>anterior</b> — no ano, <b>65%</b>. Cada linha da matriz soma o mesmo total venda-lead dos cards acima; a composição vem do recomputo de 29/09</span>
   </div>
   <div class="panel" style="margin-bottom:24px">
-    <h2>Matriz mês da venda × mês do lead <span style="font-weight:400;color:var(--faint);font-size:12px">(vidas)</span>
+    <h2>Cohort · de que mês veio o lead <span style="font-weight:400;color:var(--faint);font-size:12px">(vidas venda-lead)</span>
       <span class="segtabs" id="segTabs"></span></h2>
-    <div class="cap">linha = mês em que a venda foi cadastrada · coluna = mês do 1º contato do lead · célula contornada = lead do próprio mês · a área acima da diagonal é vazia por construção (lead ≤ venda) · as duas últimas colunas dividem o mês entre lead <b style="color:var(--lead2)">do próprio mês</b> e lead <b style="color:#c07a2a">de safra anterior</b></div>
+    <div class="cap">das vidas venda-lead de cada mês, em que mês foi o 1º contato do lead · mostra a maturação: quanto fecha no mesmo mês e quanto vem de meses anteriores · célula = % da linha, com as vidas embaixo · contornada = lead do próprio mês</div>
     <div style="overflow-x:auto"><table class="mtx" id="mtxTable"></table></div>
+    <div class="mtxleit" id="mtxLeit"></div>
   </div>
   <div class="sechead">
     <h2>Top 20 Concessionárias — vidas de Venda-Lead Nosso</h2>
@@ -374,41 +381,38 @@ function renderTables(){
 let mtxSeg = 'TOT';
 const PROPRIO = '#ffb861', ANTER = '#c07a2a';
 
+const MTXNM = {PF:'PF', PME:'PME', ADE:'Adesão', TOT:'Consolidado'};
 function renderMatrix(){
-  const idx=selIdx(), C=COO[mtxSeg];
-  const t=document.getElementById('mtxTable');
-  if(!idx.length){ t.innerHTML='<tbody><tr><td style="color:var(--faint);text-align:left">selecione ao menos um mês</td></tr></tbody>'; return; }
-  let h='<colgroup><col style="width:124px"><col span="'+M.length+'"><col style="width:88px">'
-      + '<col style="width:60px"><col style="width:60px"></colgroup>'
-      + '<thead><tr><th style="text-align:left;color:var(--faint);font-weight:500">venda ↓ / lead →</th>'
-      + M.map(m=>`<th style="color:var(--muted);font-weight:600">${m}</th>`).join('')
-      + '<th style="text-align:right;color:var(--muted);font-weight:600">total</th>'
-      + `<th class="pch" style="color:${PROPRIO}">próprio</th><th class="pch" style="color:${ANTER}">anter.</th>`
-      + '</tr></thead><tbody>';
-  const col=M.map(()=>0); let gt=0, gp=0;
+  const idx=selIdx(), C=COO[mtxSeg], EXT=data[mtxSeg].ext, L=M.length-1;
+  const t=document.getElementById('mtxTable'), lt=document.getElementById('mtxLeit');
+  if(!idx.length){ t.innerHTML='<tbody><tr><td style="color:var(--faint);text-align:left">selecione ao menos um mês</td></tr></tbody>'; lt.innerHTML=''; return; }
+  const th='style="color:var(--muted);font-weight:600"';
+  let h='<colgroup><col style="width:56px"><col span="'+M.length+'"><col style="width:112px"></colgroup>'
+      + '<thead><tr><th style="text-align:left;color:var(--faint);font-weight:500">VENDA \ LEAD</th>'
+      + M.map((m,j)=>`<th ${th}>${m}${j===L?'*':''}</th>`).join('')
+      + '<th style="text-align:right;color:var(--muted);font-weight:600">TOTAL</th></tr></thead><tbody>';
   idx.forEach(i=>{
-    const row=C[i], rt=row.reduce((a,b)=>a+b,0), mx=Math.max(...row,1);
-    gt+=rt; gp+=row[i];
-    h+=`<tr><td class="mv">${M[i]}</td>`;
+    const row=C[i], rt=row.reduce((a,b)=>a+b,0);
+    h+=`<tr${i===L?' class="ult"':''}><td class="mv">${M[i]}${i===L?'*':''}</td>`;
     row.forEach((v,jj)=>{
-      col[jj]+=v;
-      if(!v){ h+='<td></td>'; return; }
-      const a=(0.12+0.70*v/mx).toFixed(2);
-      const dg = jj===i ? ' diag' : '';
-      h+=`<td class="cell${dg}" style="background:rgba(242,130,13,${a})" title="${M[i]}: ${fmt(v)} vidas de lead de ${M[jj]} — ${(100*v/(rt||1)).toFixed(1).replace('.',',')}% do mês">${fmt(v)}</td>`;
+      if(jj>i){ h+='<td class="na">—</td>'; return; }
+      const p = rt ? v/rt : 0, dg = jj===i;
+      const a = dg ? 0.78 : (0.07+0.9*p).toFixed(2);
+      h+=`<td class="cell${dg?' diag':''}" style="background:rgba(242,130,13,${a})" title="${M[i]}: ${fmt(v)} vidas de lead de ${M[jj]}"><b>${Math.round(100*p)}%</b><i>${fmt(v)}</i></td>`;
     });
-    const pp = rt ? Math.round(100*row[i]/rt) : 0;
-    h+=`<td class="rt">${fmt(rt)}</td>`
-     + `<td class="pc" style="color:${PROPRIO}" title="${fmt(row[i])} vidas de lead do próprio mês">${rt?pp+'%':'—'}</td>`
-     + `<td class="pc" style="color:${ANTER}" title="${fmt(rt-row[i])} vidas de lead de mês anterior">${rt?(100-pp)+'%':'—'}</td></tr>`;
+    const e=EXT[i];
+    h+=`<td class="rt"><b>${fmt(rt)}</b><i>${e?'de '+fmt(e)+' · '+Math.round(100*rt/e)+'%':''}</i></td></tr>`;
   });
-  const tp = gt ? Math.round(100*gp/gt) : 0;
-  h+='</tbody><tfoot><tr><td style="text-align:left">total por safra</td>'
-   + col.map(v=>`<td>${v?fmt(v):'—'}</td>`).join('')
-   + `<td class="rt">${fmt(gt)}</td>`
-   + `<td class="pc" style="color:${PROPRIO}">${gt?tp+'%':'—'}</td>`
-   + `<td class="pc" style="color:${ANTER}">${gt?(100-tp)+'%':'—'}</td></tr></tfoot>`;
-  t.innerHTML=h;
+  t.innerHTML=h+'</tbody>';
+  const r=C[L], rt=r.reduce((a,b)=>a+b,0), ant=rt-r[L];
+  if(rt){
+    const ord=[...Array(L).keys()].reverse().map(j=>M[j]+' '+Math.round(100*r[j]/rt)+'%').join(' · ');
+    const e=EXT[L];
+    lt.innerHTML=`<b style="color:var(--txt)">Leitura de ${M[L]}*</b> (${MTXNM[mtxSeg]}): das ${fmt(rt)} vidas venda-lead, ${M[L]}* ${Math.round(100*r[L]/rt)}% · ${ord}. `
+      + `<b style="color:${PROPRIO}">${Math.round(100*ant/rt)}%</b> vieram de lead de mês anterior.`
+      + (e?` Venda-lead = ${Math.round(100*rt/e)}% das ${fmt(e)} vidas do time externo no mês.`:'')
+      + `<br><span class="fn">* ${M[L]} é mês parcial. 1º contato = primeiro lead nosso daquele telefone no ano, anterior ou igual à data da venda; a base de leads começa em 01/2026.</span>`;
+  }
 }
 (function(){
   const tabs=document.getElementById('segTabs');
