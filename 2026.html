@@ -564,6 +564,7 @@ function abrirVend(seg, rot){
   document.getElementById('vmStats').innerHTML =
       `<div>vidas-lead<b>${fmt(r.lead)}</b></div>`
     + `<div>vendedores c/ venda-lead<b>${fmt(r.nv_lead)}</b></div>`
+    + `<div>média por vendedor<b>${r.nv_lead ? (r.lead/r.nv_lead).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1}) : '—'}</b></div>`
     + `<div>no cadastro externo<b>${fmt(r.nv_ext)}</b></div>`
     + `<div>metade das vidas sai de<b>${fmt(meia)}</b></div>`;
   const linha = v=>{
